@@ -1,5 +1,10 @@
 
 const express = require("express");
+const logger = require("morgan");
+const cors = require("cors");
+const moment = require("moment");
+const fs = require("fs/promises");
+
 const app = express();
 const port = 3000;
 
@@ -12,6 +17,18 @@ const statsRouter = require("./src/routers/statsRouter");
 
 const db = require("./src/services/db");
 const { statEmitter, stats } = require("./src/services/stats");
+
+const formatsLogger = app.get("env") === "development" ? "dev" : "short";
+
+app.use(async (req, res, next) => {
+  const { method, url } = req;
+  const date = moment().format("DD-MM-YYYY__hh:mm:ss");
+  await fs.appendFile("./public/server.log", `\n${method} ${url} ${date}`);
+  next();
+});
+
+app.use(logger(formatsLogger));
+app.use(cors());
  
 
 app.use(express.json());
