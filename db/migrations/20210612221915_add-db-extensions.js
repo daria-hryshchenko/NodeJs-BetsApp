@@ -1,3 +1,5 @@
+const { gen_random_uuid } = require("pgcrypto");
+
 exports.up = function (knex) {
   return knex.schema.raw(
     'CREATE EXTENSION IF NOT EXISTS "pgcrypto" schema public'
